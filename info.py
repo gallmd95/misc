@@ -18,7 +18,7 @@ now = datetime.datetime.now()
 
 tail = now.strftime("%Y-%m-%d_%H-%M")
 
-tempid = "temp"+now.strftime("%M")+id_generator()
+tempid = "temp_info_"+now.strftime("%M")+id_generator()
 
 
 
@@ -44,13 +44,17 @@ def zip(src, dst):
 def req(x):
     ur = "https://finance.yahoo.com/quote/"+x
     try:
-        r = requests.get(ur,allow_redirects=True)
+        headers = {
+            'User-Agent': 'My User Agent 1.0'
+        }        
+        r = requests.get(ur,allow_redirects=False, headers=headers)
+
         if r.status_code != 404 and r.text[:6] != "Moved ":
             if "root.App.main" in r.text and "}(this));" in r.text:
                 start =r.text.index("root.App.main")+16
                 end = r.text.index("}(this));")-start
                 t = r.text[start:][:end].strip()[:-1]
-                data = json.loads(t)
+                data = json.loads(t)["context"]["dispatcher"]["stores"]["QuoteSummaryStore"]
                 return (x,data)
     except requests.exceptions.HTTPError as errh:
         print "Http Error:",errh," ",x
@@ -78,5 +82,5 @@ finally:
                 with open(tempid+'/info_'+each[0]+'_'+tail+'.txt', 'w') as outfile:
                     json.dump(each[1], outfile)
     zip(tempid,"data_info/infos_"+tail)
-    os.rmdir("temp")
+    os.rmdir(tempid)
     print("--- %s seconds ---" % (time.time() - start_time))
