@@ -50,7 +50,7 @@ def req(x):
     
     
 count = 0
-with open("count.txt", "r+") as f:
+with open("count_prices.txt", "r+") as f:
     data = f.read()
     count = int(data)
     f.seek(0)

@@ -19,5 +19,5 @@ def zip(src, dst):
             os.remove(absname)
     zf.close()
 
-zip("temp_prices","data_prices/prices_"+tail)
-os.rmdir("temp_prices")
+zip("temp_info","data_info/info_"+tail)
+os.rmdir("temp_info")

@@ -1,6 +1,6 @@
 #!/bin/sh
-python start.py
+python start_prices.py
 while (( $(date +%H) < 20 )) ; do
     python prices.py
 done
-python finish.py
+python finish_prices.py
