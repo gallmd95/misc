@@ -20,10 +20,6 @@ for j in xrange(60000):
     l2 = nonlin(np.dot(l1,syn1))
     l2_error = y-l2
     if j%10000==0:
-        print syn0,'\n',syn1
-
-        print l0,'\n'+'\n',l1,'\n'+'\n',l2
-        
         print "Error"+str(np.mean(np.abs(l2_error)))
     l2_delta = l2_error*nonlin(l2,deriv=True)
     l1_error = l2_delta.dot(syn1.T)
