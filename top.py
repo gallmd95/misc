@@ -62,15 +62,17 @@ f=[]
 for (dirpath, dirnames, filenames) in os.walk(infodir):
     f.extend(dirnames)
     break
-for (dirpath, dirnames, filenames) in os.walk(infodir+'/'+f[0]):
-    infofilenames.extend(filenames)
-    break
+for each in f:
+    temp = []
+    for (dirpath, dirnames, filenames) in os.walk(infodir+'/'+each):
+        temp.extend(filenames)
+        break
+    for i,name in enumerate(temp):
+        temp[i] = infodir+'/'+each +'/'+name
+    infofilenames.extend(temp)
 
-for i,each in enumerate(infofilenames):
-    infofilenames[i] = infodir+'/'+f[0] +'/'+each
 
-
-
+count = 0
 for each in infofilenames:
     try:
         data = {}
@@ -93,11 +95,38 @@ for each in sym.keys():
     if not("summary" in sym[each].keys()):
         sym.pop(each)
 
-print [sym[each]["price"] for each in sym.keys() if "tech" in sym[each]["summary"]]
 for each in sym.keys():
     if not("cash" in sym[each].keys() and "debt" in sym[each].keys()):
         sym.pop(each)
 
+for each in sym.keys():
+    print each
+    print sym[each]
+print len(sym.keys())
 
+def nonlin(x,deriv=False):
+    if deriv==True:
+        return x*(1-x)
+    return 1/(1+np.exp(-x))
 
+x = np.array([[sym[each]["cash"]/1000000,sym[each]["debt"]/1000000] for each in sym.keys()])
+y = np.array([[sym[each]["price"]] for each in sym.keys()])
 
+np.random.seed(1)
+
+syn0 =2*np.random.random((2,1547))-1
+syn1 =2*np.random.random((1547,1))-1
+
+for j in xrange(60000):
+    
+    l0 = x
+    l1 = nonlin(np.dot(l0,syn0))
+    l2 = nonlin(np.dot(l1,syn1))
+    l2_error = y-l2
+    if j%10000==0:
+        print "Error"+str(np.mean(np.abs(l2_error)))
+    l2_delta = l2_error*nonlin(l2,deriv=True)
+    l1_error = l2_delta.dot(syn1.T)
+    l1_delta = l1_error*nonlin(l1,deriv=True)
+    syn1 += l1.T.dot(l2_delta)
+    syn0 += l0.T.dot(l1_delta)

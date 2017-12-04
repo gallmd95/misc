@@ -1,7 +1,7 @@
 import numpy as np
 
-def nonlin(x,deriv=False):
-    if deriv==True:
+def nonlin(x, deriv=False):
+    if deriv == True:
         return x*(1-x)
     return 1/(1+np.exp(-x))
 
@@ -40,8 +40,8 @@ y = np.array([[sym[each]["price"]] for each in sym.keys()])
 
 np.random.seed(1)
 
-syn0 =2*np.random.random((2,744))-1
-syn1 =2*np.random.random((744,1))-1
+syn0 =2*np.random.random((2,4))-1
+syn1 =2*np.random.random((4,1))-1
 
 for j in xrange(60000):
     
